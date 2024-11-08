@@ -1,0 +1,75 @@
+Definition:
+--> Socket programming is the way that how the computers will be communicating over the internet with each other sharing information.
+--> Socket is the node/end points that are connected by different computers
+--> A socket is an end-point of communication between devices
+Socket:
+Socket is an object that represents the connection between the client and the server. It is used to send and receive data.
+
+Server:
+A server is a device that listens for incoming connections. It can be a computer, a phone, or a device that connects to the internet.
+
+ServerSocket:
+ServerSocket is a class that provides the server functionality. It is used to listen for incoming connections and create a socket object to communicate with the client.
+
+First step:
+Install socket on both devices
+To initialize the server and client both we need to create a socket object using the socket() function.
+To establish a socket connection in Java, you use the Socket class, which allows a client to connect to a server. 
+
+Socket Parameters:
+In Java, when creating a socket connection, you usually specify two key parameters: the IP address (or hostname) and the port number. This is done with:
+
+java
+Socket socket = new Socket("IP address", portNumber);
+
+IP Address:
+An IP address is a unique identifier for a device on a network. It comes in two main types:
+IPv4 (e.g., 192.168.1.1): Uses 4 groups of numbers (0-255).
+IPv6 (e.g., 2001:0db8:85a3:0000:0000:8a2e:0370:7334): Uses 8 groups of hexadecimal numbers, providing a larger address space. The IP address tells the socket where to connect within the network.
+
+Port Number:
+The port number is a 16-bit value (ranging from 0 to 65535) that identifies a specific application or service on a device. Each service listens on a specific port, allowing multiple services to run on one IP address. Common port numbers:
+21 for FTP (file transfer).
+22 for Telnet (login).
+25 for SMTP (email).
+23 for Telnet (SSH).
+29 for Finger (login).
+37 for Time (NTP).
+80 for HTTP (web browsing).
+443 for HTTPS (secure web browsing). When you specify a port, you’re telling the socket which application or service it’s connecting to on the device.
+
+Protocol:
+Java’s Socket class defaults to the TCP (Transmission Control Protocol), which is reliable and connection-oriented. For applications requiring speed over reliability, UDP (User Datagram Protocol) is used instead, through the DatagramSocket class, which is connectionless and does not guarantee delivery.
+
+Second step:
+To bind the socket object at server to a specific IP address and port number we use the bind() function. Socket Address = IP+port; IP if ip4 is 32 bit and port is of 16 bits so address is of 48 bits.
+
+Third step:
+To start listening for incoming connections and add it to a queue if queue is filled we send a messgae to client that it is full
+
+Fourth step:
+To accept incoming connections we use the accept() function.
+
+Fifth step:
+To send data to the client we use the send() function.
+
+Input/Output Streams: PrintWriter and BufferedReader handle sending and receiving messages.
+Message Exchange: out.println() sends a message, and in.readLine() reads the response from the server.
+
+Server and server socket:
+ServerSocket waits for and accepts requests. ServerSocket waits for incoming requests from clients
+After accepting a request, a socket object is created on the server side. Initially only the client has the socket object
+
+"Multiple clients and server"
+
+You can have more than two devices communicating. In network programming, this is often referred to as a multi-client or server-client architecture, where multiple clients (devices) communicate with a single server over sockets.
+
+Here are a few common ways to achieve this:
+Multi-Client Server: The server listens for incoming client connections and can handle multiple clients simultaneously. This is often achieved using multi-threading or asynchronous programming. Each client connects to the server through a unique socket, allowing many-to-one communication.
+
+Peer-to-Peer (P2P): In a peer-to-peer architecture, each device can communicate directly with others, often with each device acting as both client and server. This model is more complex to implement but allows direct communication without a central server.
+
+Broadcasting: In some setups, a server might broadcast data to all connected clients at once, useful in applications where all clients need the same information simultaneously, like chat rooms or streaming.
+
+Multicasting: Instead of sending data to each client individually, the server can send data to a group of clients in one operation. Multicasting is often used in UDP-based applications but can be complex to set up and is less common than unicast communication (individual connections).
+

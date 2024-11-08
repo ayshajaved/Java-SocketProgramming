@@ -1,0 +1,42 @@
+A local IP address, also known as a private IP address, is a unique number that identifies a device on a 
+local area network (LAN). A router assigns a local IP address to each device on a network, such as a computer,
+phone, or tablet. Local IP addresses are used for communication between devices on the same network, such as 
+when a router sends data to a smartphone. 
+
+There is also a public ip address
+Difference Between Laptop IP and Public IP
+Laptop IP (Private IP Address):
+
+This is the IP address assigned to your laptop by your router within your local network (LAN).
+It is used for communication between devices on the same local network.
+Example: 192.168.1.36 is a private IP address. It is not routable on the internet.
+
+Public IP Address:
+This is the IP address assigned to your network by your Internet Service Provider (ISP).
+It is used to identify your network on the internet and allows external devices to communicate with devices on your local network.
+Example: If your public IP is 203.0.113.5, this is the address that others on the internet see when you connect online.
+
+Difference between router and ISP
+Aspect	                      Router	                                    ISP
+Definition	            Hardware device that connects local devices	        Company that provides internet access
+Function	            Manages data traffic within and outside a network	Offers internet connectivity and Connects users to the global internetservices
+Role in Networking	    Connects devices in a local network	                
+Ownership	            Typically owned by the user (home/business)         Owned by the service provider company
+Example	                Home router, wireless router	                    Comcast, Verizon, AT&T
+
+Using IP Addresses for Communication in Java Sockets
+When you want to communicate with your friend on the same network using Java sockets, you will use the private IP address of your friend's laptop (and your own). Here’s how to do it:
+Ensure Both Devices are on the Same Network: Both laptops must be connected to the same Wi-Fi or local network.
+Determine Your Friend's Private IP Address:
+Your friend should run ipconfig on their laptop and provide you with their IPv4 Address.
+Java Socket Connection:
+In your Java project, you will use the private IP addresses for the socket connection
+
+Port number is a 16-bit unsigned integer (ranging from 0 to 65535) used to identify specific processes or services on a device connected to a network. It acts as a communication endpoint for applications.
+How Port Numbers Work
+When a device sends or receives data over the network, the data is addressed to a specific IP address and a specific port number.
+The combination of an IP address and a port number identifies a unique connection on the network. For example, 192.168.1.36:12345 means the IP address 192.168.1.36 is being accessed at port 12345.
+Common Port Number Ranges
+Well-known Ports (0-1023): Reserved for common services like HTTP (port 80), HTTPS (port 443), FTP (port 21), etc.
+Registered Ports (1024-49151): Used for specific applications or services registered with the Internet Assigned Numbers Authority (IANA).
+Dynamic/Private Ports (49152-65535): Used for temporary or private connections, often assigned dynamically by the operating system.
