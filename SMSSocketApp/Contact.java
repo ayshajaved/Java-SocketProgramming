@@ -1,5 +1,7 @@
 package SMSSocketApp;
-
+//For now, there no use of contact class
+//Will be used in future to create a contact list
+//When we will deal with multiple clients
 public class Contact {
     private String name;
     private String email;
