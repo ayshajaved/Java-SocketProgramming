@@ -1,5 +1,4 @@
 package SMSSocketApp;
-
 import java.util.*;
 
 public class SMSapp {
