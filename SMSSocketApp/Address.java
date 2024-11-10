@@ -1,5 +1,5 @@
 package SMSSocketApp;
-
+//CLASS ADDRESS FOR THE FUTURE USE IN THE PROGRAM, WHEN WE WILL BE DEALING WITH MULTIPLE CLIENTS
 public class Address{
     private String city;
     private String country;

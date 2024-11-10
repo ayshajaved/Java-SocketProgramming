@@ -8,39 +8,39 @@ public class Server implements Runnable  {
     private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
-    private List<SMS> messages;
     private Scanner scanner;
-
-    public Server(){
-        messages = new ArrayList<>();
+    private SMSapp app;
+    static{
+        System.out.println("****************************");
+        System.out.println("THE SERVER INITIALIZATION!");
+        System.out.println("****************************");
+        System.out.println("Server is Waiting for client!");
+        System.out.println("****************************\n");
+    }
+    Server(){
         scanner = new Scanner(System.in);
-        addMessages();
+        app= new SMSapp();
     }
-    public void addMessages() {
-        messages.add(new SMS("Hello!"));
-        messages.add( new SMS("Let's go shopping!"));
-        messages.add(new SMS("How are you?"));
-        messages.add(new SMS("Goodbye!Take Care.."));
-        messages.add(new SMS("Bye!Bye!"));
-        messages.add(new SMS("See you later!!"));
-    }
-    public void startServer(int port) throws InputMismatchException, Exception {
-        serverSocket = new ServerSocket(port);
-        System.out.println("**************");
-        System.out.println("SERVER STARTED");
-        System.out.println("**************\n");
-
-        clientSocket = serverSocket.accept();
-        System.out.println("Connected to the Client...\n");
-
-        out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-        // Start server communication in a new thread
-        new Thread(this).start();
-
-        new Thread(new MessageReceiver(in)).start();
-
+    public void startServer(int port){
+        try{
+            serverSocket = new ServerSocket(port);
+            clientSocket = serverSocket.accept();
+            System.out.print("Connected to the Client with PORT: "+port+"...\n");
+            out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            // Start server communication in a new thread
+            new Thread(this).start();
+            new Thread(new MessageReceiver(in)).start();
+        }
+        catch(UnknownHostException e) {
+            System.out.println("Unknown Host: "+e.getMessage());
+        }
+        catch(ConnectException e){
+            System.out.println("Server is not available: "+e.getMessage());
+        }
+        catch(Exception e){
+            System.out.println("IO Exception: "+e.getMessage());
+        }
     }
     @Override
     public void run() {
@@ -69,11 +69,7 @@ public class Server implements Runnable  {
                             System.out.println("\nServer: " + serverMessage);
                             SMS sms = new SMS(serverMessage);
                             sms.receive();
-                            messages.add(sms); // Add the message to the list
-                            if (serverMessage.contains("exit")) {
-                                closeServer();
-                                break;
-                            }
+                            app.getMessages().add(sms); // Add the message to the list
                         }
                     } else {
                         // Brief sleep to avoid busy-waiting if no message is ready
@@ -94,114 +90,60 @@ public class Server implements Runnable  {
             int serverChoice = scanner.nextInt();
             scanner.nextLine(); // Clear the buffer
             handleServerRequest(serverChoice);
-            if (serverChoice == 8) {
-                closeServer();
-                break;
-            }
-            // Receive a message from the client
-            if (in.ready()) {     //if the server is ready to receive data from the client
-                String clientMessage = in.readLine();
-                if (clientMessage != null) {
-                    SMS sms = new SMS(clientMessage);
-                    messages.add(sms);
-                    System.out.println("Client: "+clientMessage);
-                    if (clientMessage.contains("exit")) {
-                        closeServer();
-                        break;
-                    }
-                }
-            }
-            else{
-                Thread.sleep(1000);
-            }
         }
     }
 
     public void sendMenu() {
         System.out.println(
-                "1: Send Message\n" +
-                "2: Display Messages\n" +
-                "3: Find Message\n" +
-                "4: Delete Message\n" +
-                "5: Sort Messages by ID\n" +
-                "6: Sort Messages by Sent Time\n" +
-                "7: Sort Messages by Content\n" +
-                "8: Exit\n");
-    }
-    public void sortById(){
-        Collections.sort(messages, new IdComparing());
-        displayMessages();
-    }
-    public void sortBySentTime(){
-        Collections.sort(messages, new SentTimeComapring());
-        displayMessages();
-    }
-    public void sortByMessageContent(){
-        Collections.sort(messages, new ContentComparing());
-        displayMessages();
-    }
-
+            "1: SEND MESSAGE\n" +
+            "2: DISPLAY MESSAGES\n" +
+            "3: FIND BY ID/CONTENT\n" +
+            "4: EDIT BY ID\n" +
+            "5: DELETE BY ID/CONTENT\n" +
+            "6: SORT-BY-ID\n" +
+            "7: SORT-BY-TIME\n" +
+            "8: SORT-BY-CONTENT\n" +
+            "9: EXIT\n");
+}
     private void handleServerRequest(int choice) throws InputMismatchException, Exception {
-        switch (choice) {
-            case 1 -> sendMessage();
-            case 2 -> displayMessages();
-            case 3 -> findMessage();
-            case 4 -> deleteMessage();
-            case 5 -> sortById();
-            case 6 -> sortBySentTime();
-            case 7 -> sortByMessageContent();
-            case 8 -> {
+        MenuOption option = MenuOption.getValueOf(choice);
+        switch (option) {
+            case SEND -> sendMessage();
+            case DISPLAY -> app.displayMessages();
+            case FIND -> app.findMessage();
+            case EDIT ->app.editMessage();
+            case DELETE -> app.deleteMessage();
+            case SORT_BY_ID -> app.sortById();
+            case SORT_BY_TIME -> app.sortByTime();
+            case SORT_BY_CONTENT -> app.sortByMessageContent();
+            case EXIT -> {
                 out.println("Server chose to exit.");
                 closeServer();
             }
             default -> System.out.println("Invalid choice. Please try again.");
         }
     }
-    private void sendMessage() throws Exception {
-        System.out.println("Enter message to send:");
-        String message = scanner.nextLine();
-        if (!message.isEmpty()) {
-            messages.add(new SMS(message));
-            out.println(message);
-            System.out.println("Message sent to client successfully!");
+    public void sendMessage() {
+        System.out.println("Enter the language of the message (English/Roman): ");
+        String languageChoice = scanner.nextLine();
+        System.out.println("Enter the message to send:");
+        String messageContent = scanner.nextLine();
+        SMS sms;
+        switch (languageChoice.toLowerCase().trim()) { // Trim to remove spaces
+            case "english":
+                sms = new EnglishSMS(messageContent);
+                break;
+            case "roman":
+                sms = new RomanSMS(messageContent);
+                break;
+            default:
+                System.out.println("Invalid language choice, defaulting to English.");
+                sms = new EnglishSMS(messageContent);
+                break;
         }
-    }
-
-    private void displayMessages() {
-        if (messages.isEmpty()) {
-            System.out.println("No messages to display.");
-        } else {
-            System.out.println("Messages:");
-            for (SMS msg : messages) {
-                System.out.println(msg.display());
-            }
-        }
-    }
-
-    private void findMessage() throws Exception {
-        System.out.println("Enter the message content to search:");
-        String search = scanner.nextLine();
-        boolean found = false;
-        for (SMS msg : messages) {
-            if (msg.getMessageContent().contains(search)) {
-                System.out.println("Found: " + msg.getMessageContent());
-                found = true;
-            }
-        }
-        if (!found) {
-            System.out.println("No messages found containing: " + search);
-        }
-    }
-
-    private void deleteMessage() throws Exception {
-        System.out.println("Enter the message content to delete:");
-        String content = scanner.nextLine();
-        boolean removed = messages.removeIf(msg -> msg.getMessageContent().contains(content));
-        if (removed) {
-            System.out.println("Message deleted successfully.");
-        } else {
-            System.out.println("No message found containing: " + content);
-        }
+        app.getMessages().add(sms);
+        out.println(sms.getMessageContent());
+        System.out.println("Message sent successfully!");
     }
     public void closeServer() throws Exception {
         System.out.println("Closing server...");
@@ -210,6 +152,7 @@ public class Server implements Runnable  {
         clientSocket.close();
         serverSocket.close();
         System.out.println("Server closed successfully.");
+        System.exit(0);
     }
 
     public static void main(String[] args) {
