@@ -11,14 +11,14 @@ public class SMS {
     private static int counter = 0;
 
     SMS(String content){
-        this.messageId = String.format("%04d", ++counter);
+        this.messageId = String.format("%03d", ++counter);
         this.messageContent = content;
         this.sentTime = LocalDateTime.now().plusSeconds(counter);
     }
 
     public void editMessageContent(String messageContent) {
         isEdited = true; //Set message status to edited
-        this.messageContent = messageContent;
+        this.messageContent = messageContent+" (Edited SMS)";
         this.sentTime = LocalDateTime.now().plusSeconds(counter);
     }
 
