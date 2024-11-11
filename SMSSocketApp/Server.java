@@ -61,13 +61,17 @@ public class Server implements Runnable  {
         @Override
         public void run() {
             try {
-                String serverMessage;
+                String clientMessage;
                 while (true) {
                     if (in.ready()) {  // Check if data is available to prevent blocking
-                        serverMessage = in.readLine();
-                        if (serverMessage != null) {
-                            System.out.println("\nServer: " + serverMessage);
-                            SMS sms = new SMS(serverMessage);
+                        clientMessage = in.readLine();
+                        if(clientMessage.equalsIgnoreCase("Client chose to exit.")){
+                            out.println("Client chose to exit.");
+                            closeServer();                        
+                            }
+                        if (clientMessage != null) {
+                            System.out.println("\nClient: " + clientMessage);
+                            SMS sms = new SMS(clientMessage);
                             sms.receive();
                             app.getMessages().add(sms); // Add the message to the list
                         }
@@ -82,15 +86,26 @@ public class Server implements Runnable  {
         }
     }
     
-    public void handleCommunication() throws InputMismatchException, Exception {
+    public void handleCommunication() throws Exception {
         while (true) {
-            // Display menu for server-side operations
-            System.out.println("\nServer Menu:");
-            sendMenu();
+        // Display menu for server-side operations
+        System.out.println("\nSERVER MENU");
+        System.out.println("************");
+        sendMenu();
+        try{
+            System.out.print("Enter your choice: ");
             int serverChoice = scanner.nextInt();
             scanner.nextLine(); // Clear the buffer
             handleServerRequest(serverChoice);
         }
+        catch(InputMismatchException e){
+            System.out.println("Input Mismatch Exception!\nTry Again..");
+            scanner.nextLine(); // Clear the buffer so that while can execute again
+        }
+        catch(NullPointerException e){
+            System.out.println("Null Pointer Exception");
+        }
+    }
     }
 
     public void sendMenu() {
@@ -105,8 +120,9 @@ public class Server implements Runnable  {
             "8: SORT-BY-CONTENT\n" +
             "9: EXIT\n");
 }
-    private void handleServerRequest(int choice) throws InputMismatchException, Exception {
+    private void handleServerRequest(int choice) throws Exception {
         MenuOption option = MenuOption.getValueOf(choice);
+        
         switch (option) {
             case SEND -> sendMessage();
             case DISPLAY -> app.displayMessages();
@@ -162,6 +178,9 @@ public class Server implements Runnable  {
         } 
         catch(InputMismatchException e){
             System.out.println("Input Exception: "+e.getMessage());
+        }
+        catch(NullPointerException e){
+            System.out.println("Null Pointer Exception: "+e.getMessage());
         }
         catch (Exception e) {
             System.out.println("Server Error: " + e.getMessage());

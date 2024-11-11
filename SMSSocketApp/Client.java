@@ -69,6 +69,10 @@ public class Client implements Runnable{
                 while (true) {
                     if (in.ready()) {  // Check if data is available to prevent blocking
                         serverMessage = in.readLine();
+                        if(serverMessage.equalsIgnoreCase("Server chose to exit.")){
+                            out.println("Server chose to exit.");
+                            closeClient();
+                            }
                         if (serverMessage != null) {
                             System.out.println("\nServer: " + serverMessage);
                             SMS sms = new SMS(serverMessage);
@@ -90,15 +94,27 @@ public class Client implements Runnable{
         }
     }
     
-    public void handleCommunication() throws InputMismatchException,Exception {
+    public void handleCommunication() throws Exception {
         while (true) {
+            try{
              // Display menu for client-side operations
-             System.out.println("\nClient Menu:");
+             System.out.println("\nCLIENT MENU:");
+             System.out.println("************");
              sendMenu();
+             System.out.print("Enter your choice: ");
              int clientChoice = scanner.nextInt();
              scanner.nextLine(); // Clear the buffer
              handleClientRequest(clientChoice);
         }
+        catch(InputMismatchException e)
+        {
+            System.out.println("Input Mismatch Exception!\nTry again..");
+            scanner.nextLine(); // Clear the buffer so that while can execute again
+        }
+        catch(NullPointerException e){
+            System.out.println("Null Pointer Exception!");
+        }
+    }
     }
     public void sendMenu() {
         System.out.println(
@@ -112,9 +128,9 @@ public class Client implements Runnable{
                 "8: SORT-BY-CONTENT\n" +
                 "9: EXIT\n");
     }
-    private void handleClientRequest(int choice) throws InputMismatchException, Exception {
+    private void handleClientRequest(int choice) throws Exception {
         MenuOption option = MenuOption.getValueOf(choice);
-        switch (option) {
+            switch (option) {
             case SEND -> sendMessage();
             case DISPLAY -> app.displayMessages();
             case FIND -> app.findMessage();
@@ -167,6 +183,9 @@ public class Client implements Runnable{
         }
         catch (InputMismatchException e) {
             System.out.println("Input Error: " + e.getMessage());
+        }
+        catch(NullPointerException e){
+            System.out.println("Null Pointer Error: " + e.getMessage());
         }
         catch (Exception e) {
             System.out.println("Client Error: " + e.getMessage());
