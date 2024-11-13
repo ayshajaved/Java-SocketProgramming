@@ -13,11 +13,11 @@ public class Client implements Runnable{
         app = new SMSapp();
     }
     static{
-        System.out.println("****************************");
+        System.out.println("*******************************");
         System.out.println("THE CLIENT INITIALIZATION!");
-        System.out.println("****************************");
+        System.out.println("*******************************");
         System.out.println("Attempting to connect the server!");
-        System.out.println("****************************\n");
+        System.out.println("*******************************\n");
     }
     public void Initializeclient(){
         try{
@@ -39,7 +39,7 @@ public class Client implements Runnable{
         socket = new Socket(IP,port);
         out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+        
         // Start client communication in a new thread
         new Thread(this).start();
         //seperate thread for receiving messages
@@ -120,7 +120,7 @@ public class Client implements Runnable{
         System.out.println(
                 "1: SEND MESSAGE\n" +
                 "2: DISPLAY MESSAGES\n" +
-                "3: FIND BY ID/CONTENT\n" +
+                "3: FIND BY ID/CONTENT/TYPE\n" +
                 "4: EDIT BY ID\n" +
                 "5: DELETE BY ID/CONTENT\n" +
                 "6: SORT-BY-ID\n" +
@@ -180,7 +180,7 @@ public class Client implements Runnable{
         try {
             Client client = new Client();
             client.Initializeclient();
-        }
+        } 
         catch (InputMismatchException e) {
             System.out.println("Input Error: " + e.getMessage());
         }

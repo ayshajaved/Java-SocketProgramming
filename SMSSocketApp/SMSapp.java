@@ -47,17 +47,51 @@ public class SMSapp {
         }
     }
     public void findMessage() throws Exception{
-        System.out.println("Enter the message ID or content to search:");
-        String search = scanner.nextLine();
-        boolean found = false;
-        for (SMS msg : messages) {
-            if (msg.getMessageId().equals(search) || msg.getMessageContent().toLowerCase().contains(search)) {
-                System.out.println("Found: " + msg.getMessageContent());
-                found = true;
-            }
-        }
-        if (!found) {
-            System.out.println("No messages found containing: " + search);
+        System.out.println("""
+                Enter your choice:
+                1: By Id/Content
+                2: By SMS Type
+                """);
+        int find = scanner.nextInt();
+        scanner.nextLine();
+        switch (find){
+            case 1:
+                System.out.println("Enter the message ID or content to search:");
+                String search = scanner.nextLine();
+                boolean found = false;
+                for (SMS msg : messages) {
+                    if (msg.getMessageId().equals(search) || msg.getMessageContent().toLowerCase().contains(search)) {
+                        System.out.println("Found: " + msg.getMessageContent());
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    System.out.println("No messages found containing: " + search);
+                }
+                break;
+            case 2:
+                System.out.println("Enter the SMS type to search: (1 for English, 2 for Roman)");
+                int type = scanner.nextInt();
+                scanner.nextLine();
+                boolean foundType = false;
+                for (SMS msg : messages) {
+                    //checking msg if it is the instance of english sms class
+                    if (msg instanceof EnglishSMS && type == 1) {
+                        System.out.println("Found: " + msg.getMessageContent());
+                        foundType = true;
+                    }
+                    //checking msg if it is the instance of roman sms class
+                    if(msg instanceof RomanSMS && type == 2){
+                        System.out.println("Found: " + msg.getMessageContent()); 
+                        foundType = true;
+                    }
+                }
+                if (!foundType) {
+                    System.out.println("No messages found of type: " + type);
+                }
+                break;
+            default:
+                break;
         }
     }
     public void deleteMessage() throws Exception {
@@ -87,21 +121,4 @@ public class SMSapp {
             System.out.println("No message found with ID: " + id);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

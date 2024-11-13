@@ -112,7 +112,7 @@ public class Server implements Runnable  {
         System.out.println(
             "1: SEND MESSAGE\n" +
             "2: DISPLAY MESSAGES\n" +
-            "3: FIND BY ID/CONTENT\n" +
+            "3: FIND BY ID/CONTENT/TYPE\n" +
             "4: EDIT BY ID\n" +
             "5: DELETE BY ID/CONTENT\n" +
             "6: SORT-BY-ID\n" +
